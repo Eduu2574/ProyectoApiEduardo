@@ -6,21 +6,20 @@ SECRET_KEY = "toor"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 MINUTOS ES EL TIEMPO DE EXPIRACION DEL TOKEN
 
-# CONTEXTO PARA HASHEAR Y VERIFICAR CONTRASEÑAS CON BCRYPT
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-# HASHEAR LA CONTRASEÑA ANTES DE GUARDARLA EN LA BD
+#  HASEO LA CONTRASEÑA ANTES DE ALMACENARLA EN LA BASE DE DATOS
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-# VERIFICAR SI LA CONTRASEÑA PROPORCIONADA ES CORRECTA
+# VERIFICO SI LA PASSWORD ES CORRECTA
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# CREAR EL TOKEN JWT
+# CREAR TOKEN JWT
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:

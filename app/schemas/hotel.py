@@ -19,7 +19,7 @@ class UpdateHotel(BaseModel):
 
 # Esquema para RESPUESTA de hotel (con ID)
 class HotelResponse(BaseModel):
-    id: int
+    idHotel: int  # Cambié de id a idHotel
     nombre: str
     descripcion: Optional[str]
     categoria: str
@@ -27,4 +27,4 @@ class HotelResponse(BaseModel):
     localidad: str
 
     class Config:
-        from_attributes = True
+        orm_mode = True  # Esto permit

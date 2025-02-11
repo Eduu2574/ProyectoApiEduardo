@@ -3,7 +3,6 @@ uvicorn
 psycopg2
 pydantic
 SQLAlchemy
-python-jose[cryptography]
 passlib
 python-multipart
 pydantic[email]

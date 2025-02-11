@@ -19,4 +19,4 @@ class Habitacion(Base):
 
     # Una habitación puede ser reservada por un solo usuario a la vez
     idUsuario = Column(Integer, ForeignKey("usuarios.idUsuario"), nullable=True)
-    usuario = relationship("User", back_populates="habitaciones")
+    usuario = relationship("UsuarioTable", back_populates="habitaciones")

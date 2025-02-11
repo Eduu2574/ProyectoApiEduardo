@@ -18,15 +18,16 @@ class UpdateHabitacion(BaseModel):
     desayuno: Optional[bool] = None
     ocupada: Optional[bool] = None
 
+
 # Esquema para RESPUESTA de habitación (con ID)
 class HabitacionResponse(BaseModel):
-    id: int
+    idHabitacion: int  # Cambié de id a idHabitacion
     tamaio: str
     personas: Optional[int]
     precio: float
     desayuno: Optional[bool]
     ocupada: Optional[bool]
-    idHotel: int
+    idHotel: int  # Relación con el hotel
 
     class Config:
-        from_attributes = True
+        orm_mode = True  # Permite que FastAPI convierta automáticamente el modelo SQLAlchemy a la respuesta Pydantic

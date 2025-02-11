@@ -13,10 +13,10 @@ SessionLocal = sessionmaker(bind=engine,autocommit=False,autoflush=False)
 Base = declarative_base()
 
 def get_db():
-    db = SessionLocal()  #Crear una nueva sesión
+    db = SessionLocal()
     try:
-        yield db  #Devuelvo la sesión para su uso
+        yield db
     except Exception as e:
-        print(e)
+        print(f"❌ Error en get_db: {e}")
     finally:
-        db.close()  #Cierro la sesión después de usarla
+        db.close()

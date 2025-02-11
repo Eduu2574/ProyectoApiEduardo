@@ -30,7 +30,8 @@ def get_hotel_by_id(hotel_id: int, db: Session = Depends(get_db)):
     hotel = db.query(Hotel).filter(Hotel.idHotel == hotel_id).first()
     if not hotel:
         raise HTTPException(status_code=404, detail="Hotel no encontrado")
-    return hotel
+    return hotel  # Esto debe devolver el objeto Hotel
+    
 
 # ACTUALIZAR UN HOTEL
 @router.put("/{hotel_id}", response_model=HotelResponse, summary="Actualizar un hotel")

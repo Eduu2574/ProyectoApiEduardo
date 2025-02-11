@@ -1,62 +1,77 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
 from app.db.database import get_db
-from app.models.user import User
-from app.schemas.user import UserResponse, UpdateUser, UserCreate
+from app.models.user import UsuarioTable
+from app.schemas.user import UpdateUsuario, Usuario
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(
-    prefix="/users",
-    tags=["Users"]
+    prefix="/usuario",
+    tags=["Usuarios"]
 )
 
 # OBTENER TODOS LOS USUARIOS
-@router.get("/", response_model=List[UserResponse])
+@router.get("/obtener_usuarios")
 def obtener_usuarios(db: Session = Depends(get_db)):
-    return db.query(User).all()
+    usuarios = db.query(UsuarioTable).all()
+    return usuarios
 
-# CREAR UN NUEVO USUARIO 
-@router.post("/", summary="Crear un nuevo usuario", response_model=UserResponse)
-def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = User(username=user.username, email=user.email, password=user.password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-# OBTENER UN USUARIO POR ID
-@router.get("/{user_id}", response_model=UserResponse, summary="Obtener un usuario por ID")
-def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
+# OBTENER USUARIO POR ID
+@router.get("/obtener_usuario_por_id/{user_id}")
+def obtener_usuario_por_id(user_id: int, db: Session = Depends(get_db)):
+    usuario = db.query(UsuarioTable).filter(UsuarioTable.idUsuario == user_id).first()
+    if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return user
+    return usuario
 
-# ACTUALIZAR UN USUARIO
-@router.put("/{user_id}", response_model=UserResponse, summary="Actualizar un usuario")
-def update_user_info(user_id: int, user: UpdateUser, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.id == user_id).first()
-    if not db_user:
+# CREAR UN NUEVO USUARIO
+@router.post("/crear_usuario", response_model=Usuario)
+def crear_usuario(user: Usuario, db: Session = Depends(get_db)):
+    try:
+        # Verificación si el correo ya existe
+        db_user_by_email = db.query(UsuarioTable).filter(UsuarioTable.correo == user.correo).first()
+        if db_user_by_email:
+            raise HTTPException(status_code=400, detail="El correo electrónico ya está en uso.")
+        
+        nuevo_usuario = UsuarioTable(
+            username=user.username,
+            correo=user.correo,
+            password=user.password
+        )
+        db.add(nuevo_usuario)
+        db.commit()
+        db.refresh(nuevo_usuario)
+        return nuevo_usuario
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Error al crear el usuario: " + str(e.orig))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error inesperado al crear el usuario: {str(e)}")
+
+# ELIMINAR UN USUARIO POR SU ID
+@router.delete("/eliminar_usuario/{user_id}")
+def eliminar_usuario_por_id(user_id: int, db: Session = Depends(get_db)):
+    deleteUser = db.query(UsuarioTable).filter(UsuarioTable.idUsuario == user_id).first()
+    if not deleteUser:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    db.delete(deleteUser)
+    db.commit()
+    return {"Respuesta": "Usuario eliminado correctamente"}
 
-    if user.username:
-        db_user.username = user.username
-    if user.password:
-        db_user.password = user.password
-    if user.email:
-        db_user.email = user.email
+# MODIFICAR USUARIOS
+@router.patch("/modificar_usuario/{user_id}", response_model=Usuario)
+def actualizar_usuario_por_id(user_id: int, updateUser: UpdateUsuario, db: Session = Depends(get_db)):
+    actualizarUser = db.query(UsuarioTable).filter(UsuarioTable.idUsuario == user_id).first()
+    if not actualizarUser:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    if updateUser.username:
+        actualizarUser.username = updateUser.username
+    if updateUser.correo:
+        actualizarUser.correo = updateUser.correo
+    if updateUser.password:
+        actualizarUser.password = updateUser.password
 
     db.commit()
-    db.refresh(db_user)
-    return db_user
-
-# ELIMINAR UN USUARIO
-@router.delete("/{user_id}", summary="Eliminar un usuario", response_model=UserResponse)
-def delete_user_info(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-
-    db.delete(user)
-    db.commit()
-    return user
+    db.refresh(actualizarUser)
+    return actualizarUser

@@ -6,12 +6,11 @@ from app.db.database import Base
 class Hotel(Base):
     __tablename__ = "hoteles"
 
-    idHotel = Column(Integer, primary_key=True, autoincrement=True)
+    idHotel = Column(Integer, primary_key=True, autoincrement=True)  # Aquí 'idHotel' es la clave primaria
     nombre = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=True)
     categoria = Column(String(50), nullable=False)
     piscina = Column(Boolean, default=False)
     localidad = Column(String(100), nullable=False)
 
-    # Un hotel tiene muchas habitaciones
     habitaciones = relationship("Habitacion", back_populates="hotel")

@@ -30,26 +30,28 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 
 # INICIAR SESION Y OBTENER EL TOKEN JWT
-@router.post("/login", summary="Iniciar sesion para obtener el token JWT")
+@router.post("/login", summary="Iniciar sesión para obtener el token JWT")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # BUSCAR EL USUARIO POR NOMBRE DE USUARIO
+    print(f"Intentando autenticar usuario: {form_data.username}")
+
     user = db.query(User).filter(User.username == form_data.username).first()
-
-    # SI NO SE ENCUENTA, SE LANZA UNA EXCEPCION
     if not user:
+        print("❌ Usuario no encontrado en la base de datos.")
         raise HTTPException(status_code=400, detail="Credenciales incorrectas")
 
-    # VERIFICAR LA CONTRASEÑA CON LA ALMACENADA EN LA BD
-    # (la función 'verify_password' sirve para comparar la contraseña)
-    if not verify_password(form_data.password, user.password):
-        raise HTTPException(status_code=400, detail="Credenciales incorrectas")
+    try:
+        if not verify_password(form_data.password, user.password):
+            print("❌ Contraseña incorrecta.")
+            raise HTTPException(status_code=400, detail="Credenciales incorrectas")
+    except Exception as e:
+        print(f"❌ Error en verify_password: {e}")
+        raise HTTPException(status_code=500, detail="Error al verificar contraseña")
 
-    # SI LAS CREDENCIALES SSON VALIDAS, SE CREA EL TOKEN JWT PARA AUTENTICAR AL USUARIO
-    # CON EL ID DEL USUARIO  COMO 'sub' (SUBJECT)
+    print("✅ Credenciales correctas, generando token...")
     access_token = create_access_token(data={"sub": user.id})
 
-    # SE RETORNA EL TOKEN JWT GENERADO JUNTO CON EL TIPO DE TOKEN
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 
 # RUTA PROTEGIDA (SOLO ACCESIBLE CON TOKEN VALIDO)

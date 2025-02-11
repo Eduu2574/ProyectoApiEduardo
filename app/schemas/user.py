@@ -1,23 +1,15 @@
+from datetime import datetime
 from pydantic import BaseModel, EmailStr
-from typing import Optional
 
-# Esquema para CREAR un usuario (sin ID porque la BD lo genera)
-class UserCreate(BaseModel):
+# Clase Usuario para crear y responder con la información del usuario
+class Usuario(BaseModel):
     username: str
-    email: EmailStr
+    correo: EmailStr  # Pydantic valida que sea un correo válido
     password: str
+    fecha_registro: datetime = datetime.now()  # Fecha actual por defecto
 
-# Esquema para ACTUALIZAR usuario (todos los campos opcionales)
-class UpdateUser(BaseModel):
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
-
-# Esquema para RESPUESTA de usuario (con ID)
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    email: EmailStr
-
-    class Config:
-        from_attributes = True
+# Clase para modificar un usuario
+class UpdateUsuario(BaseModel):
+    username: str = None
+    correo: EmailStr = None
+    password: str = None

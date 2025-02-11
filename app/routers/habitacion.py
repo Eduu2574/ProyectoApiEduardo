@@ -16,14 +16,14 @@ def obtener_habitaciones(db: Session = Depends(get_db)):
     return db.query(Habitacion).all()
 
 # CREAR UNA NUEVA HABITACIÓN
+# CREAR UNA NUEVA HABITACIÓN
 @router.post("/", response_model=HabitacionResponse, summary="Crear una nueva habitación")
 def create_habitacion(habitacion: HabitacionCreate, db: Session = Depends(get_db)):
-    nueva_habitacion = Habitacion(**habitacion.dict())
+    nueva_habitacion = Habitacion(**habitacion.dict())  # Esto creará una nueva instancia de Habitacion
     db.add(nueva_habitacion)
     db.commit()
     db.refresh(nueva_habitacion)
-    return nueva_habitacion
-
+    return nueva_habitacion  # Esto devuelve la nueva habitación
 # OBTENER UNA HABITACIÓN POR ID
 @router.get("/{habitacion_id}", response_model=HabitacionResponse, summary="Obtener una habitación por ID")
 def get_habitacion_by_id(habitacion_id: int, db: Session = Depends(get_db)):
@@ -56,3 +56,4 @@ def delete_habitacion(habitacion_id: int, db: Session = Depends(get_db)):
     db.delete(habitacion)
     db.commit()
     return habitacion
+

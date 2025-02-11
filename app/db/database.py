@@ -10,6 +10,8 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine,autocommit=False,autoflush=False)
 #Crea una clase base llamada Base, para definir los modelos de tablas de la base de datos.
 
+Base = declarative_base()
+
 def get_db():
     db = SessionLocal()  #Crear una nueva sesión
     try:

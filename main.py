@@ -1,6 +1,6 @@
 from fastapi import FastAPI 
 import uvicorn
-from app.routers import jwt, user, hotel, habitacion
+from app.routers import jwt, user,hotel,habitacion
 from app.db.database import Base, engine
 
 def create_tables():

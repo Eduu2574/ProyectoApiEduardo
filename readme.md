@@ -12,7 +12,7 @@ El proyecto está diseñado para ser escalable y fácilmente personalizable, ada
 
 ## 📖 Memoria del Proyecto
 Para más información sobre el diseño, desarrollo y funcionamiento de la API, puedes consultar la memoria del proyecto:
-[📄 Memoria del Proyecto](./path-to-your-project-documentation.pdf)
+[📄 Memoria del Proyecto](./https://github.com/Eduu2574/ProyectoApiEduardo/blob/main/Dominguez_Toribio_Eduardo_Memoria_ProyectoFinal_DAM24.pdf)
 
 ## 🚀 Tecnologías Utilizadas
 - **FastAPI**: Framework principal para la implementación de la API.

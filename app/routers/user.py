@@ -15,7 +15,7 @@ router = APIRouter(
 def obtener_usuarios(db: Session = Depends(get_db)):
     return db.query(User).all()
 
-# CREAR UN NUEVO USUARIO (sin usar user_crud.py)
+# CREAR UN NUEVO USUARIO 
 @router.post("/", summary="Crear un nuevo usuario", response_model=UserResponse)
 def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = User(username=user.username, email=user.email, password=user.password)
